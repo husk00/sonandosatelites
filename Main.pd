@@ -1,0 +1,712 @@
+#N canvas 352 136 1001 520 10;
+#X obj 73 287 sound_gen;
+#X obj 158 273 env~;
+#X obj 11 275 env~;
+#X obj 73 313 sound_out;
+#N canvas 487 84 479 511 readme 0;
+#X text 34 12 OUTERSPACE - An ambient sound generator by Alberto Zin
+- 2006;
+#X text 34 457 No warranty at all. The patch is provided "as-is" \,
+without any express or implied warranty. In no event shall the author
+be held liable for any damages arising for use of this patch.;
+#X text 35 65 OuterSpace is an instrument for PureData capable of generating
+audio effects like wind \, water \, "space" sounds.;
+#X text 34 356 The OuterSpace instrument is loosely based on the SpaceDrone
+instrument from Reaktor 5 library but since it is PD it is better (and
+free) :-). Joking.;
+#X text 179 427 WARRANTY;
+#X text 34 110 The instrument is based on white noise filtered by a
+bank of 128 (!) band-pass filters spread across the audible spectrum.
+Each filter contributes to the overall sound as a "voice". Each voice
+has a "quartic" attack and decay amplitude envelope triggered independently
+for a "natural" effect of attack and decay. Each voice is then placed
+in the stereo field and rotated from left to right following a low
+frequency oscillator (LFO) \, plus some spread. High frequencies cam
+be attenuated using a power law (1/x)^d \, where x is the frequency
+and d is the "damp" control. The output is reverberated using freeverb~.
+Few reverb parameters are implemented in the main control GUI. Keep
+an eye to the CPU load. On old machines 128 voices may hang up the
+audio. In this case try to reduce the polyphony to lower numbers. Doing
+so you'll loose the high frequency part of the spectrum but using frequency
+spacing parameter can compensate for this.;
+#X restore 585 296 pd readme;
+#X obj 582 267 save_load_par;
+#X obj 583 192 norm_val;
+#X obj 11 298 - 97;
+#X obj 158 298 - 97;
+#X obj 12 327 vu 15 120 empty empty -1 -8 0 8 -66577 -1 1 0;
+#X obj 159 327 vu 15 120 empty empty -1 -8 0 8 -66577 -1 1 0;
+#X obj 583 241 random_preset-low-cpu;
+#X obj 583 217 preset-low-cpu;
+#X msg 165 237 seek 500;
+#N canvas 1 236 450 300 reverb 0;
+#X obj 75 -193 cnv 15 300 260 empty empty Reverb_(freeverb~) 20 12
+0 14 -233017 -66577 0;
+#X obj 86 -105 vsl 15 128 0 3000 0 0 OS_revgain0 OS_revgain0 empty
+0 -8 0 8 -233017 -1 -1 4233 1;
+#X obj 142 -105 vsl 15 128 0 100 0 0 OS_WetDry0 OS_WetDry0 empty 0
+-8 0 8 -233017 -1 -1 2286 1;
+#X obj 200 -105 vsl 15 128 0 100 0 0 OS_RevSize0 OS_RevSize0 empty
+0 -8 0 8 -233017 -1 -1 7112 1;
+#X obj 259 -103 vsl 15 128 0 100 0 0 OS_RevDamp0 OS_RevDamp0 empty
+0 -8 0 8 -233017 -1 -1 3810 1;
+#X text 253 -132 Damp;
+#X obj 327 -104 vsl 15 128 0 100 0 0 OS_RevWidth0 OS_RevWidth0 empty
+0 -8 0 8 -233017 -1 -1 4191 1;
+#X text 296 -133 StereoWidth;
+#X text 79 -130 Gain;
+#X text 123 -131 Wet/Dry;
+#X text 180 -131 Room Size;
+#X floatatom 85 43 5 0 0 0 - OS_reverbgain -;
+#X msg 205 -157 30;
+#X obj 239 -167 loadbang;
+#X connect 12 0 3 0;
+#X connect 13 0 12 0;
+#X restore 585 170 pd reverb;
+#X msg 67 214 open terzo.ogg \, 1;
+#X obj 337 361 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X obj 124 175 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 443 586 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X floatatom -29 696 5 0 0 0 - - -;
+#X floatatom 25 697 5 0 0 0 - - -;
+#X msg 33 610 stop;
+#X obj -15 192 loadbang;
+#X obj 809 420 random 100;
+#X obj 812 386 metro 1000;
+#X obj 812 348 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#X obj 813 534 line;
+#X floatatom 819 567 5 0 0 0 - - -;
+#X msg 814 511 \$1 500;
+#X obj 810 444 + 10;
+#X obj 871 340 random 100;
+#X obj 871 316 metro 1000;
+#X obj 870 360 * 10;
+#X obj 869 289 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#X obj 803 212 loadbang;
+#X obj 807 235 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#X obj 183 213 s OS_preset;
+#X obj 266 112 s OS_trigger;
+#X obj 269 87 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 1
+1;
+#X obj 271 60 loadbang;
+#X floatatom 270 218 5 0 0 0 - - -;
+#X msg 183 191 3;
+#X obj 181 167 loadbang;
+#X obj 271 163 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 209 519 st-material /key;
+#X text -28 11 this patch was originally developed by Alberto Zin -
+FIlter used here are made by Matt Davey. OSC data is retraived from
+gpredict thanks to David Pello's patch - Luca Carrubba 2011;
+#X obj 500 437 readsf~;
+#X msg 500 410 open data/ISS1.wav \, start;
+#X text -29 -3 Soñando Satelites - realtime satellite soundTrack;
+#X obj 264 193 cyclone/counter 0 7;
+#X obj 103 466 unauthorized/spigot~;
+#X obj -27 667 pdogg/oggwrite~;
+#X obj 76 250 pdogg/oggread~;
+#X obj 373 361 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 503 369 cyclone/onebang 1;
+#X obj 502 392 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 480 346 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 501 318 sel 1;
+#X obj 582 345 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 519 341 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 216 378 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X obj 271 369 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X obj 328 324 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X obj 740 715 st-wavedistort /key;
+#N canvas 326 200 959 454 bubler+ 0;
+#X msg 795 148 just;
+#X msg 847 148 12tet;
+#X obj 795 181 s bub;
+#X text 35 38 +bubbler~;
+#X obj 696 148 notein;
+#X obj 690 365 hsl 128 15 0 100 0 0 bub_delvol bub_initdelvol empty
+-2 -8 0 10 -228856 -1 -1 12700 1;
+#X obj 690 312 hsl 128 15 0 100 0 0 bub_dryvol bub_initdryvol empty
+-2 -8 0 10 -228856 -1 -1 0 1;
+#X text 686 344 Delay Volume (dB);
+#X text 686 291 Dry Volume (dB);
+#X obj 575 89 bng 15 250 50 0 bub_openfile empty open-sound-file 17
+7 0 12 -4034 -1 -1;
+#X obj 696 181 pack f f;
+#N canvas 215 84 696 653 init 0;
+#X msg 399 160 20000;
+#X msg 85 356 0;
+#X msg 462 130 832.6;
+#X msg 509 61 50;
+#X obj 115 509 s bub_initfb;
+#X obj 115 463 s bub_initoctave;
+#X obj 115 486 s bub_initoctvari;
+#X obj 115 440 s bub_initgvar;
+#X obj 115 417 s bub_initgrev;
+#X msg 249 264 80;
+#X msg 302 231 10;
+#X obj 462 153 s bub_inittime;
+#X obj 400 183 s bub_initfilterFreq;
+#X obj 529 88 s bub_initres;
+#X obj 529 112 s bub_inittimevar;
+#X obj 302 256 s bub_initgrainsize;
+#X obj 249 289 s bub_initdensity;
+#X msg 355 197 1;
+#X obj 355 222 s bub_but0;
+#X msg 146 326 100;
+#X msg 31 553 \; pd dsp 1 \;;
+#X obj 31 -8 loadbang;
+#X obj 31 15 t b b b b b b b b b b;
+#X obj 146 353 s bub_initdelvol;
+#X obj 189 318 s bub_initdryvol;
+#X msg 189 291 0;
+#X obj 566 42 s bub_initoct;
+#X msg 566 19 4;
+#X connect 0 0 12 0;
+#X connect 1 0 4 0;
+#X connect 1 0 5 0;
+#X connect 1 0 6 0;
+#X connect 1 0 7 0;
+#X connect 1 0 8 0;
+#X connect 2 0 11 0;
+#X connect 3 0 13 0;
+#X connect 3 0 14 0;
+#X connect 9 0 16 0;
+#X connect 10 0 15 0;
+#X connect 17 0 18 0;
+#X connect 19 0 23 0;
+#X connect 21 0 22 0;
+#X connect 22 0 20 0;
+#X connect 22 1 1 0;
+#X connect 22 2 19 0;
+#X connect 22 2 25 0;
+#X connect 22 3 9 0;
+#X connect 22 4 10 0;
+#X connect 22 5 17 0;
+#X connect 22 6 0 0;
+#X connect 22 7 2 0;
+#X connect 22 8 3 0;
+#X connect 22 9 27 0;
+#X connect 25 0 24 0;
+#X connect 27 0 26 0;
+#X restore 773 58 pd init;
+#N canvas 77 84 1035 558 bubbler 0;
+#X text 19 160 time \, feedback \, filter freq \, resonance- these
+are identical in function to the same parameters in "+delay~". The
+only exception is that the range of time is from 20 milliseconds to
+10 seconds.;
+#X text 17 233 time variation - this will select a random delay time
+for each grain from time - (time vari * time) to time + (time vari
+* time). This control has a range from 0% to 100%.;
+#X text 15 294 density - this controls the number of grains present
+at any given moment. It varies from 0% to 200%. At 100% \, grains are
+created at a rate so that two grains are present (on average). This
+is done because each grain is enveloped \, and it is necessary to overlap
+grains for smooth audio.;
+#X text 17 391 grain size - this is the size of each grain as a percentage
+of the delay time. This control varies from 0% to 50%.;
+#X text 521 27 g start vari - this control varies from 0% to 100%.
+At 0% grains will be created at a fixed frequency (grain rate) dependent
+on the grain size and density \, for synchronous granular synthesis.
+When the g start vari is increased \, the grain start time will deviate
+from this fixed frequency.;
+#X text 519 280 grain reversal - this will randomly reverse the grain.
+At 0% \, none of the grains will be reversed \, at 100% \, all of the
+grains will be reversed. This is especially effective when the grain
+size and delay time is large.;
+#X text 522 230 octave variation - this will add a random octave pitch
+shift to each grain.;
+#X text 20 31 This is a granular delay. That is \, small or large bits
+of sound (grains) are read from the delay \, and are recombined before
+sending to the output and feedback. The grains of sound are given smooth
+envelopes \, so that they can be recombined without transient distortion.
+The start of the grain \, the delay in each grain \, the playback direction
+and the pitch of each grain can be randomized.;
+#X text 16 437 Dry/Delay volume-controls the volume of the original
+signal (dry) or the delayed signal (delay);
+#X text 16 480 Mix-controls the ratio of dry-delay in the output. Ranges
+from 0 to 100% (0% all dry \, 100% all delay). Adjust mix \, then adjust
+volumes as desired.;
+#X text 17 5 +bubbler~;
+#X text 522 127 pitch shift/octave - these controls give each grain
+a pitch shift. Pitch shifting is controlled via MIDI input to the right
+inlet \, given as a note/velocity pair. When multiple MIDI notes are
+held \, the pitch shift values are randomly selected from the collection
+for each grain. The octave value is added to the pitch shift.;
+#X text 520 362 12tet/just - this button sets the pitch shifting to
+12 tone equal temperament \, or to just intonation.;
+#X restore 685 35 pd bubbler details;
+#X obj 575 199 +bubbler~;
+#X obj 590 166 r bub;
+#X floatatom 837 312 5 0 100 0 - bub_dryvol -;
+#X floatatom 837 365 5 0 100 0 - bub_delvol -;
+#N canvas 135 177 664 511 sf-player 0;
+#N canvas 0 22 450 300 (subpatch) 0;
+#X array bub_soundfile 448705 float 2;
+#X coords 0 1 448705 -1 200 140 1;
+#X restore 34 32 graph;
+#X obj 286 33 openpanel;
+#X obj 286 96 soundfiler;
+#X obj 286 181 phasor~ 0.5;
+#X obj 286 208 *~;
+#X obj 72 289 /;
+#X obj 72 242 t b f;
+#X obj 72 265 samplerate~;
+#X obj 286 11 r bub_openfile;
+#X msg 286 64 read -resize -maxsize 2e+06 \$1 bub_soundfile;
+#X obj 286 121 s bub_filelength;
+#X obj 328 208 r bub_filelength;
+#X obj 286 232 tabread4~ bub_soundfile;
+#X obj 72 316 s bub_phasorfreq;
+#X obj 286 156 r bub_phasorfreq;
+#X obj 72 219 r bub_filelength;
+#X obj 286 463 dac~;
+#X obj 306 272 outlet~;
+#X msg 307 366 \$1 50;
+#X obj 307 389 line~;
+#X obj 286 420 *~;
+#X obj 307 343 dbtorms;
+#X obj 307 320 r bub_dryvol;
+#X connect 1 0 9 0;
+#X connect 2 0 10 0;
+#X connect 3 0 4 0;
+#X connect 4 0 12 0;
+#X connect 5 0 13 0;
+#X connect 6 0 7 0;
+#X connect 6 1 5 1;
+#X connect 7 0 5 0;
+#X connect 8 0 1 0;
+#X connect 9 0 2 0;
+#X connect 11 0 4 1;
+#X connect 12 0 17 0;
+#X connect 12 0 20 0;
+#X connect 14 0 3 0;
+#X connect 15 0 6 0;
+#X connect 18 0 19 0;
+#X connect 19 0 20 1;
+#X connect 20 0 16 0;
+#X connect 20 0 16 1;
+#X connect 21 0 18 0;
+#X connect 22 0 21 0;
+#X restore 575 119 pd sf-player;
+#X obj 32 65 cnv 15 500 60 empty empty empty 20 12 0 14 -228856 -66577
+0;
+#X text 37 64 This is a delay using granular synthesis. Small clips
+(grains) of audio are read and re-ordered before being sent to the
+delay output. Various parameters such as playback direction and pitch
+of each grain can be controlled.;
+#X obj 541 147 inlet~;
+#X obj 575 236 outlet~;
+#X floatatom 39 213 10 1 10000 0 - - -;
+#X floatatom 37 332 10 20 20000 0 - - -;
+#X floatatom 428 331 5 0 100 0 - - -;
+#X msg 39 231 time \$1;
+#X msg 428 352 resonance \$1;
+#X floatatom 239 213 5 0 100 0 - - -;
+#X obj 37 370 s bub;
+#X obj 39 251 s bub;
+#X floatatom 36 449 5 0 200 0 - - -;
+#X floatatom 427 448 5 0 100 0 - - -;
+#X obj 36 487 s bub;
+#X floatatom 236 449 5 0 50 0 - - -;
+#X msg 36 467 density \$1;
+#X floatatom 436 554 5 0 100 0 - - -;
+#X obj 38 593 s bub;
+#X msg 38 573 octave \$1;
+#X msg 239 233 timeVariation \$1;
+#X msg 236 469 grainSize \$1;
+#X msg 427 469 grainStartVariation \$1;
+#X msg 436 575 grainReversal \$1;
+#X msg 238 575 octaveVariation \$1;
+#X obj 42 194 hsl 128 15 1 10000 1 0 empty bub_inittime empty -2 -8
+0 10 -228856 -1 -1 5506 1;
+#X floatatom 237 333 5 0 200 0 - - -;
+#X obj 240 314 hsl 128 15 0 200 0 0 empty bub_initfb empty -2 -8 0
+10 -228856 -1 -1 0 1;
+#X obj 242 194 hsl 128 15 0 100 0 0 empty bub_inittimevar empty -2
+-8 0 10 -228856 -1 -1 6350 1;
+#X obj 40 314 hsl 128 15 20 20000 1 0 empty bub_initfilterFreq empty
+-2 -8 0 10 -228856 -1 -1 12700 1;
+#X obj 431 312 hsl 128 15 1 100 0 0 empty bub_initres empty -2 -8 0
+10 -228856 -1 -1 6286 1;
+#X obj 239 430 hsl 128 15 0 50 0 0 empty bub_initgrainsize empty -2
+-8 0 10 -228856 -1 -1 2540 1;
+#X obj 39 430 hsl 128 15 0 200 0 0 empty bub_initdensity empty -2 -8
+0 10 -228856 -1 -1 5080 1;
+#X obj 430 429 hsl 128 15 0 100 0 0 empty bub_initgvar empty -2 -8
+0 10 -228856 -1 -1 0 1;
+#X obj 439 535 hsl 128 15 0 100 0 0 empty bub_initgrev empty -2 -8
+0 10 -228856 -1 -1 0 1;
+#X msg 37 350 filterFreq \$1;
+#X msg 237 352 feedback \$1;
+#X text 237 174 0 - 100%;
+#X text 236 296 0 - 200%;
+#X text 427 294 0 - 100%;
+#X text 35 412 0 - 200%;
+#X text 237 411 0 - 50%;
+#X text 428 409 0 - 100%;
+#X text 437 517 0 - 100%;
+#X text 38 175 1 - 10000 ms (log);
+#X text 34 297 20 - 20kHz (log);
+#X obj 38 533 hradio 15 1 0 9 empty bub_initoct empty 0 -8 0 10 -262144
+-1 -1 6;
+#X obj 38 551 - 4;
+#X obj 238 555 hradio 15 1 0 3 empty empty empty 0 -8 0 10 -262144
+-1 -1 0;
+#X obj 327 446 r azimuth;
+#X floatatom 329 480 5 0 0 0 - - -;
+#X floatatom 490 253 5 0 0 0 - - -;
+#X obj 488 219 r elevation;
+#X floatatom 277 518 5 0 0 0 - - -;
+#X obj 327 503 mod 3;
+#X obj 364 263 r elevation;
+#X obj 105 394 autoscale 20 95;
+#X obj 221 380;
+#X obj 644 460 print;
+#X obj 416 185 r x;
+#X obj 385 298 mod 9;
+#X obj 28 147 r log;
+#X floatatom 429 213 5 0 0 0 - - -;
+#X obj 584 397 r Y;
+#X obj 121 357 r Y;
+#X connect 0 0 2 0;
+#X connect 1 0 2 0;
+#X connect 4 0 10 0;
+#X connect 4 1 10 1;
+#X connect 10 0 13 1;
+#X connect 13 0 21 0;
+#X connect 14 0 13 0;
+#X connect 20 0 13 0;
+#X connect 22 0 25 0;
+#X connect 23 0 53 0;
+#X connect 24 0 26 0;
+#X connect 25 0 29 0;
+#X connect 26 0 28 0;
+#X connect 27 0 38 0;
+#X connect 30 0 34 0;
+#X connect 31 0 40 0;
+#X connect 33 0 39 0;
+#X connect 34 0 32 0;
+#X connect 35 0 41 0;
+#X connect 37 0 36 0;
+#X connect 38 0 29 0;
+#X connect 39 0 32 0;
+#X connect 40 0 32 0;
+#X connect 41 0 36 0;
+#X connect 42 0 36 0;
+#X connect 43 0 22 0;
+#X connect 44 0 54 0;
+#X connect 45 0 44 0;
+#X connect 46 0 27 0;
+#X connect 47 0 23 0;
+#X connect 48 0 24 0;
+#X connect 49 0 33 0;
+#X connect 50 0 30 0;
+#X connect 50 0 76 0;
+#X connect 51 0 31 0;
+#X connect 52 0 35 0;
+#X connect 53 0 28 0;
+#X connect 54 0 28 0;
+#X connect 64 0 65 0;
+#X connect 65 0 37 0;
+#X connect 66 0 42 0;
+#X connect 68 0 72 0;
+#X connect 69 0 68 0;
+#X connect 70 0 69 0;
+#X connect 71 0 66 0;
+#X connect 72 0 71 0;
+#X connect 73 0 78 0;
+#X connect 74 0 50 0;
+#X connect 74 0 45 0;
+#X connect 77 0 48 0;
+#X connect 77 0 52 0;
+#X connect 77 0 45 0;
+#X connect 77 0 51 0;
+#X connect 77 0 80 0;
+#X connect 78 0 64 0;
+#X connect 79 0 43 0;
+#X connect 82 0 74 0;
+#X connect 82 0 49 0;
+#X restore 195 676 pd bubler+;
+#X obj 115 814 dac~;
+#X obj 160 658 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X obj 122 706 *~ 0.5;
+#N canvas 1 104 718 595 cherb 0;
+#X obj 242 214 cnv 15 400 250 empty empty empty 20 12 0 14 -233017
+-66577 0;
+#X floatatom 453 393 5 -60 0 0 - - -;
+#X floatatom 504 393 5 -60 0 0 - - -;
+#X floatatom 554 393 5 -60 0 0 - - -;
+#X floatatom 298 393 5 -60 0 0 - - -;
+#X floatatom 350 393 5 -60 0 0 - - -;
+#X floatatom 401 393 5 -60 0 0 - - -;
+#X obj 401 429 s cheb;
+#X msg 298 411 p1 \$1;
+#X msg 350 411 p2 \$1;
+#X msg 401 411 p3 \$1;
+#X msg 453 411 p4 \$1;
+#X msg 504 411 p5 \$1;
+#X msg 554 411 p7 \$1;
+#X obj 298 251 vsl 15 128 -60 0 0 0 empty p1 empty 0 -9 0 10 -162280
+-1 -1 12700 1;
+#X obj 350 250 vsl 15 128 -60 0 0 0 empty p empty 0 -9 0 10 -162280
+-1 -1 0 1;
+#X obj 401 250 vsl 15 128 -60 0 0 0 empty p empty 0 -9 0 10 -162280
+-1 -1 0 1;
+#X obj 453 250 vsl 15 128 -60 0 0 0 empty p empty 0 -9 0 10 -162280
+-1 -1 0 1;
+#X obj 504 250 vsl 15 128 -60 0 0 0 empty p empty 0 -9 0 10 -162280
+-1 -1 0 1;
+#X obj 554 250 vsl 15 128 -60 0 0 0 empty p empty 0 -9 0 10 -162280
+-1 -1 0 1;
+#X text 246 143 Master Volume (dB);
+#X obj 24 246 +chebyshev~;
+#X obj 51 212 r cheb;
+#X text 254 217 Polynomial Controls (-60 to 0 dB per harmonic);
+#N canvas 161 115 339 360 init 0;
+#X obj 74 25 loadbang;
+#X msg 74 258 \; pd dsp 1;
+#X obj 124 225 s p1;
+#X msg 153 147 -60;
+#X obj 153 172 s p;
+#X msg 170 92 70;
+#X obj 74 48 t b b b b;
+#X obj 170 117 s cheb-vol-set;
+#X msg 124 200 0;
+#X connect 0 0 6 0;
+#X connect 3 0 4 0;
+#X connect 5 0 7 0;
+#X connect 6 0 1 0;
+#X connect 6 1 8 0;
+#X connect 6 2 3 0;
+#X connect 6 3 5 0;
+#X connect 8 0 2 0;
+#X restore 582 481 pd init;
+#X obj 245 166 hsl 128 15 0 127 0 0 cheb-vol cheb-vol-set empty -2
+-8 0 10 -228856 -1 -1 7000 1;
+#X floatatom 385 166 5 0 0 0 - cheb-vol -;
+#X obj 34 299 outlet~;
+#X obj 22 173 inlet~;
+#X connect 1 0 11 0;
+#X connect 2 0 12 0;
+#X connect 3 0 13 0;
+#X connect 4 0 8 0;
+#X connect 5 0 9 0;
+#X connect 6 0 10 0;
+#X connect 8 0 7 0;
+#X connect 9 0 7 0;
+#X connect 10 0 7 0;
+#X connect 11 0 7 0;
+#X connect 12 0 7 0;
+#X connect 13 0 7 0;
+#X connect 14 0 4 0;
+#X connect 15 0 5 0;
+#X connect 16 0 6 0;
+#X connect 17 0 1 0;
+#X connect 18 0 2 0;
+#X connect 19 0 3 0;
+#X connect 21 0 27 0;
+#X connect 22 0 21 0;
+#X connect 28 0 21 0;
+#X restore 85 353 pd cherb;
+#X obj 614 -47 netreceive 8888;
+#X floatatom 607 4 5 0 0 0 - - -;
+#X obj 707 33 autoscale 0 100;
+#X msg 700 0 load 40 550;
+#X obj 803 -5 loadbang;
+#X obj 704 87 < 50;
+#X obj 704 114 sel 1;
+#X obj 699 145 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 734 150 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X msg 638 334 stop;
+#X obj 776 95 > 50;
+#X obj 770 122 sel 1;
+#X obj 765 153 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 800 158 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X msg 754 195 1;
+#X msg 792 181 0;
+#X obj 614 -24 route X Y;
+#X obj 527 77 autoscale 0 100;
+#X floatatom 522 106 5 0 0 0 - - -;
+#X obj 623 39 loadbang;
+#X obj 485 -20 print YY;
+#X msg 521 43 load 40 350;
+#X obj 520 135 s Y;
+#X obj 582 125 s x;
+#X obj 95 616 unauthorized/spigot~;
+#X obj 119 761 *~ 1.1;
+#X obj 809 491 / 1;
+#X obj 805 469 moses 200;
+#X obj 818 601 s log;
+#X obj 380 415 sel 1;
+#X obj 406 436 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X msg 379 475 0;
+#X msg 413 473 1;
+#X obj 794 67 spigot;
+#X obj 382 496 s gate;
+#X obj 825 40 r gate;
+#X obj 647 93 spigot;
+#X obj 674 64 r gate;
+#X obj 450 42 spigot;
+#X obj 477 13 r gate;
+#X obj 809 255 metro 30000;
+#X obj 305 478 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 506 467 *~ 0.151;
+#X obj 399 374 metro 300;
+#X obj 417 331 tgl 15 0 empty empty empty 17 7 0 10 -262144 -1 -1 0
+1;
+#X obj 361 448 bng 15 250 50 0 empty empty empty 17 7 0 10 -262144
+-1 -1;
+#X obj 250 419 sel 0;
+#X msg 256 453 0;
+#X obj 174 708 *~ 0.1;
+#X obj 314 707 sel 1;
+#X msg 345 738 0;
+#X msg 311 738 0.15;
+#X msg 442 389 0;
+#X msg -25 635 open 2+sat_4_03_12.ogg \, start;
+#X obj 222 337 OSCreceiver;
+#X connect 1 0 8 0;
+#X connect 2 0 7 0;
+#X connect 3 0 68 0;
+#X connect 3 1 68 0;
+#X connect 7 0 9 0;
+#X connect 8 0 10 0;
+#X connect 13 0 52 0;
+#X connect 15 0 52 0;
+#X connect 16 0 50 1;
+#X connect 17 0 15 0;
+#X connect 17 0 43 0;
+#X connect 18 0 93 1;
+#X connect 18 0 66 0;
+#X connect 21 0 51 0;
+#X connect 22 0 15 0;
+#X connect 23 0 29 0;
+#X connect 24 0 23 0;
+#X connect 25 0 24 0;
+#X connect 26 0 27 0;
+#X connect 27 0 97 0;
+#X connect 28 0 26 0;
+#X connect 29 0 96 0;
+#X connect 30 0 32 0;
+#X connect 31 0 30 0;
+#X connect 32 0 24 1;
+#X connect 33 0 31 0;
+#X connect 34 0 35 0;
+#X connect 35 0 109 0;
+#X connect 38 0 37 0;
+#X connect 39 0 38 0;
+#X connect 41 0 36 0;
+#X connect 42 0 41 0;
+#X connect 43 0 49 0;
+#X connect 44 0 93 0;
+#X connect 46 0 111 0;
+#X connect 47 0 46 0;
+#X connect 49 0 36 0;
+#X connect 49 0 40 0;
+#X connect 50 0 93 0;
+#X connect 50 1 44 0;
+#X connect 51 0 19 0;
+#X connect 51 1 20 0;
+#X connect 52 0 0 0;
+#X connect 52 1 0 0;
+#X connect 52 3 17 0;
+#X connect 54 0 55 0;
+#X connect 55 0 47 0;
+#X connect 56 0 54 0;
+#X connect 57 0 56 0;
+#X connect 57 1 59 0;
+#X connect 58 0 54 1;
+#X connect 62 0 115 0;
+#X connect 62 0 98 0;
+#X connect 64 0 67 0;
+#X connect 66 0 67 1;
+#X connect 66 0 118 0;
+#X connect 67 0 94 0;
+#X connect 68 0 2 0;
+#X connect 68 0 1 0;
+#X connect 68 0 50 0;
+#X connect 69 0 85 0;
+#X connect 70 0 71 0;
+#X connect 71 0 102 0;
+#X connect 71 0 105 0;
+#X connect 71 0 92 0;
+#X connect 72 0 71 0;
+#X connect 73 0 72 0;
+#X connect 74 0 75 0;
+#X connect 75 0 76 0;
+#X connect 75 1 77 0;
+#X connect 76 0 54 0;
+#X connect 77 0 78 0;
+#X connect 77 0 58 0;
+#X connect 78 0 46 0;
+#X connect 79 0 80 0;
+#X connect 80 0 81 0;
+#X connect 80 1 82 0;
+#X connect 81 0 83 0;
+#X connect 82 0 84 0;
+#X connect 83 0 16 0;
+#X connect 84 0 16 0;
+#X connect 85 0 70 0;
+#X connect 85 1 86 0;
+#X connect 86 0 87 0;
+#X connect 87 0 91 0;
+#X connect 88 0 90 0;
+#X connect 90 0 86 0;
+#X connect 93 0 94 0;
+#X connect 93 1 64 0;
+#X connect 93 1 117 0;
+#X connect 94 0 51 0;
+#X connect 94 0 51 1;
+#X connect 94 0 65 0;
+#X connect 94 0 65 1;
+#X connect 95 0 28 0;
+#X connect 96 0 95 0;
+#X connect 98 0 100 0;
+#X connect 98 0 114 0;
+#X connect 98 1 99 0;
+#X connect 99 0 101 0;
+#X connect 100 0 103 0;
+#X connect 101 0 103 0;
+#X connect 102 0 79 0;
+#X connect 104 0 102 1;
+#X connect 105 0 74 0;
+#X connect 106 0 105 1;
+#X connect 107 0 87 0;
+#X connect 108 0 107 1;
+#X connect 109 0 33 0;
+#X connect 109 0 25 0;
+#X connect 111 0 65 0;
+#X connect 111 0 65 1;
+#X connect 112 0 121 0;
+#X connect 113 0 112 0;
+#X connect 115 0 116 0;
+#X connect 117 0 94 0;
+#X connect 118 0 120 0;
+#X connect 118 1 119 0;
+#X connect 119 0 117 1;
+#X connect 120 0 117 1;
+#X connect 122 0 51 0;
+#X connect 123 0 60 0;
+#X connect 123 1 62 0;
+#X connect 123 2 61 0;
+#X connect 123 3 44 2;

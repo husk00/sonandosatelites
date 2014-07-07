@@ -1,0 +1,10 @@
+#N canvas 1 84 450 300 10;
+#X obj 183 37 smooth;
+#X obj 184 102 line;
+#X msg 184 75 \$1 150;
+#X obj 184 13 inlet;
+#X obj 182 124 outlet;
+#X connect 0 0 2 0;
+#X connect 1 0 4 0;
+#X connect 2 0 1 0;
+#X connect 3 0 0 0;

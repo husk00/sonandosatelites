@@ -1,0 +1,8 @@
+#N canvas 1 51 450 300 10;
+#X obj 43 105 s play;
+#X obj 43 79 cyclone/onebang;
+#X obj 126 60 r stop;
+#X obj 40 40 inlet;
+#X connect 1 0 0 0;
+#X connect 2 0 1 1;
+#X connect 3 0 1 0;
